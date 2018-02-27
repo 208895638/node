@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title></title>
+    <link href="https://cdn.bootcss.com/bootstrap/3.3.5/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.bootcss.com/jquery/1.10.1/jquery.js"></script>
+    <script src="https://cdn.bootcss.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+</head>
+
+<body class="container">
+    <ul class="nav nav-pills">
+        <% if(logined){ %>
+            <li role="presentation"><a href="javascript:;" data-toggle="modal" data-target="#myModal">添加</a></li>
+            <li role="presentation"><a href="/logout">退出</a></li>
+            <% }else{ %>
+                <li role="presentation"><a href="javascript:;" data-toggle="modal" data-target="#loginDialog">登录</a></li>
+                <% } %>
+
+
+    </ul>
+    <form action="/login" method="post" id="loginDialogForm">
+        <div class="modal fade" id="loginDialog" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title">Modal title</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="loginname">登录名</label>
+                            <input type="text" name="loginname" class="form-control title" id="loginname" placeholder="用户名">
+                        </div>
+                        <div class="form-group">
+                            <label for="password">登录密码</label>
+                            <input type="text" name="password" class="form-control title" id="password" placeholder="密码">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <input type="submit" class="btn btn-primary" value="登录">
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+    </form>
+    <form action="/add" method="post">
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title">Modal title</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">标题</label>
+                            <input type="text" name="title" class="form-control title" id="exampleInputEmail1" placeholder="Email">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <input type="submit" class="btn btn-primary" value="添加">
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+    </form>
+    <form action="/update" method="post">
+        <div class="modal fade" id="myModal2" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                        <h4 class="modal-title">Modal title</h4>
+                    </div>
+                    <div class="modal-body">
+                        <div class="form-group">
+                            <label for="exampleInputEmail1">标题</label>
+                            <input type="hidden" class="hiddens" name="index">
+                            <input type="text" name="title" class="form-control title title2" id="" placeholder="Email">
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                        <input type="submit" class="btn btn-primary" value="更改">
+                    </div>
+                </div>
+                <!-- /.modal-content -->
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
+    </form>
+    <!-- /.modal -->
+    <ul class="list-group">
+        <% if(logined){ %>
+            <% list.forEach(function(article,index){ %>
+                <li class="list-group-item">
+                    <%= article.title %> <a href="/delate?index=<%= index %>">删除</a> <a href="#" data-toggle="modal" data-target="#myModal2" onclick="edit(<%= index %>)">更改</a>
+                </li>
+                <% }) %>
+                    <% } %>
+    </ul>
+
+</body>
+<script>
+    function edit(index) {
+        $.get("/get/" + index, function(result) {
+            $("#myModal2 .title2").val(result.title);
+            $("#myModal2 .hiddens").val(index);
+        })
+    }
+    $("#loginDialogForm")[0].onsubmit = function(e) {
+        e.preventDefault(); //这个就是用来阻止submit按钮点击时刷新页面提交数据
+        $.post("/login", {
+            loginname: $("#loginname").val(),
+            password: $("#password").val()
+        }, function(result) {
+            if (result == "success") {
+                window.location.reload();
+            } else {
+                alert("登录失败");
+            }
+        })
+        return false;
+    }
+</script>
+
+</html>
